@@ -22,7 +22,7 @@ export default async function handler(
     await checkToken(req);
     await checkScope('users', req);
 
-    const { email, password, confirm_password, name, role_id } = req.body;
+    const { email, password, confirm_password, name, role_id, status } = req.body;
     if (!email || !password || !confirm_password || !name || !role_id) {
       throw new Error("All fields are required");
     }
@@ -50,7 +50,7 @@ export default async function handler(
       password: bcrypt.hashSync(password, salt),
       name,
       role_id,
-      status: 'turnoff',
+      status,
       id: uuidv7()
     }
 

@@ -17,6 +17,8 @@ import {
   PiUserCircleDuotone,
   PiUsersDuotone,
 } from 'react-icons/pi'
+import useConfirm from '@/stores/useConfirm'
+import { Button } from './styled'
 
 const montserrat = Montserrat({ subsets: ['latin'] })
 const noto_sc = Noto_Sans_SC({ weight: '900', subsets: ['latin'] })
@@ -67,13 +69,84 @@ const StyledLink = styled(Link)`
   }
 `
 
+const CenteredOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const GradientBackground = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(
+    to bottom right,
+    rgba(254, 202, 202, 0.7), /* from-red-200/20 */
+    rgba(248, 113, 113, 0.5), /* via-red-400/20 */
+    rgba(0, 0, 0, 0.2)        /* to-black/20 */
+  );
+  z-index: 10;
+`;
+
+const Card = styled(motion.div)`
+  background-color: white;     /* bg-white */
+  padding-left: 1rem;               /* p-4 */
+  padding-right: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-radius: 0.5rem;       /* rounded-lg */
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1); /* shadow-lg */
+  z-index: 20;
+  width: 380px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+`;
+
+const CancelButton = styled(Button)`
+  background-color: #f3f4f6;  /* bg-neutral-200 */
+  color: #374151;             /* text-gray-700 */
+  border: 1px solid #d1d5db;  /* border-neutral-300 */
+
+  &:hover {
+    background-color: #e5e7eb; /* bg-neutral-300 */
+  }
+`;
+
+const SubmitButton = styled(Button)`
+  background-color: red;  /* bg-blue-600 */
+  color: white;               /* text-white */
+  border: none;
+
+  &:hover {
+    background-color: darkred; /* bg-blue-700 */
+  }
+`;
+
+const FlexEndContainer = styled.div`
+  display: flex;
+  justify-content: flex-end; /* Aligns items to the end of the container horizontally */
+  align-items: center;       /* Centers items vertically */
+  gap: 0.5rem;
+`;
+
 const Layout: FC<PropsWithChildren> = ({ children }) => {
-  const auth = useAuth()
-  const router = useRouter()
+  const auth = useAuth();
+  const router = useRouter();
+  const confirm = useConfirm();
   const [ready, setReady] = useState(false)
 
   const handleLogout = () => {
     auth.clearToken()
+    router.push('/login')
   }
 
   useEffect(() => {
@@ -95,7 +168,8 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
           <meta name='viewport' content='width=device-width, initial-scale=1' />
           <link rel='icon' href='/favicon.ico' />
         </Head>
-        <main className={montserrat.className}>
+        <main className={montserrat.className} style={{ minHeight: '100vh' }}>
+          {/* {auth.} */}
           <AnimatePresence>
             <Navbar
               initial={{ opacity: 0, y: -50 }}
@@ -134,6 +208,35 @@ const Layout: FC<PropsWithChildren> = ({ children }) => {
             </Navbar>
           </AnimatePresence>
           <div style={{ padding: 8, paddingTop: 12 }}>{children}</div>
+          <AnimatePresence>
+            {confirm.open && (
+              <CenteredOverlay>
+                <GradientBackground
+                  onClick={() => confirm.clear()}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                />
+                <Card
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.5, opacity: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
+                >
+                  <p>{confirm.title}</p>
+                  <FlexEndContainer>
+                    <CancelButton onClick={() => confirm.onCancel()}>
+                      Cancel
+                    </CancelButton>
+                    <SubmitButton onClick={() => confirm.onSubmit()}>
+                      Submit
+                    </SubmitButton>
+                  </FlexEndContainer>
+                </Card>
+              </CenteredOverlay>
+            )}
+          </AnimatePresence>
         </main>
       </>
     )

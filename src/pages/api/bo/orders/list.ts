@@ -40,13 +40,13 @@ export default async function handler(
     }
 
     if (req.query.order_code) {
-      extras += ` AND order_code LIKE '%${req.query.keyword}%'`;
+      extras += ` AND order_code LIKE '%${req.query.order_code}%'`;
     }
     if (req.query.order_type) {
-      extras += ` AND order_type = '${req.query.keyword}'`;
+      extras += ` AND order_type = '${req.query.order_type}'`;
     }
     if (req.query.payment_type) {
-      extras += ` AND payment_type = '${req.query.keyword}'`;
+      extras += ` AND payment_type = '${req.query.payment_type}'`;
     }
     if (req.query.status) {
       extras += ` AND status = '${req.query.status}'`;

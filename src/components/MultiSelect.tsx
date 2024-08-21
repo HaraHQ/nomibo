@@ -57,17 +57,21 @@ const features = [
   },
 ]
 
-const MultiSelector: FC = () => {
+interface MultiSelector {
+  selected: string[];
+  onSelect: (item: string[]) => void;
+}
+
+const MultiSelector: FC<MultiSelector> = ({ selected, onSelect }) => {
   const [show, setShow] = useState(false);
-  const [selected, setSelected] = useState<string[]>([]);
 
   const handleSelect = (item: string) => {
     if (selected.includes(item)) {
       // If the item is already selected, remove it from the selected array
-      setSelected(selected.filter((i) => i !== item));
+      onSelect(selected.filter((i) => i !== item));
     } else {
       // If the item is not selected, add it to the selected array
-      setSelected([...selected, item]);
+      onSelect([...selected, item]);
     }
   };
 

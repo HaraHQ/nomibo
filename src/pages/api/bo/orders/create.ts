@@ -43,12 +43,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       customer_id,
       payment_type,
       status: 'WAITING_PAYMENT',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      created_at: new Date(),
+      updated_at: new Date(),
     }
 
     // create order
-    const order = await turso.execute({
+    await turso.execute({
       sql: 'INSERT INTO orders (id, order_code, cart, user_id, order_type, customer_id, payment_type, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       args: [
         payload.id,
@@ -65,29 +65,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     })
 
     // place order items based on cart
-    for (const item of cart) {
+    await cart.map(async (item: any) => {
       const payload_item = {
         id: uuidv7(),
         order_id: payload.id,
         product_id: item.product_id,
         quantity: item.quantity,
         price: item.price,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
+        created_at: new Date(),
+        updated_at: new Date(),
       }
       await turso.execute({
         sql: 'INSERT INTO order_items (id, order_id, product_id, quantity, price, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)',
         args: [
           payload_item.id,
           payload.id,
-          item.product_id,
+          item.id,
           payload_item.quantity,
           payload_item.price,
           payload_item.created_at,
           payload_item.updated_at,
         ],
       })
-    }
+    })
 
     res.status(200).json({
       success: true,

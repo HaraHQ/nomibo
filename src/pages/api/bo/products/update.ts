@@ -52,7 +52,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     }
 
     // check if product status is active or not, if active cannot update yet -> need to deactived first
-    if (product.rows[0].status === 'active') {
+    if (product.rows[0].status === 'active' && status !== 'inactive') {
       throw new Error('Product is active, cannot update')
     }
 

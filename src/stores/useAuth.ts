@@ -4,6 +4,8 @@ import { decodeJwt } from 'jose';
 
 interface AuthState {
   token: string;
+  getUID: () => string | void;
+  checkScope: (scope: string) => boolean;
   setToken: (token: string) => void;
   validate: () => boolean;
   clearToken: () => void;
@@ -12,6 +14,22 @@ interface AuthState {
 const useAuth = create(
   persist<AuthState>((set, get) => ({
     token: '',
+    getUID: () => {
+      try {
+        const decode = decodeJwt(get().token as string);
+        return decode.id as string;
+      } catch (error) {
+        get().clearToken()
+      }
+    },
+    checkScope: (scope: string) => {
+      try {
+        const decode = decodeJwt(get().token as string);
+        return (decode.scopes as string[])?.includes(scope);
+      } catch (error) {
+        return false;
+      }
+    },
     setToken: (token: string) => set({ token }),
     validate: () => {
       try {

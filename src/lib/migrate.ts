@@ -16,6 +16,8 @@ const data = [
       { f: 'name', t: 'TEXT' },
       { f: 'role_id', t: 'TEXT' },
       { f: 'status', t: 'TEXT' },
+      { f: 'created_at', t: 'REAL' },
+      { f: 'updated_at', t: 'REAL' },
     ],
   },
   {
@@ -25,6 +27,8 @@ const data = [
       { f: 'title', t: 'TEXT' },
       { f: 'description', t: 'TEXT' },
       { f: 'scopes', t: 'TEXT' },
+      { f: 'created_at', t: 'REAL' },
+      { f: 'updated_at', t: 'REAL' },
     ],
   },
   {

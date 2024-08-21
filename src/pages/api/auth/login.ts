@@ -17,6 +17,17 @@ type Payload = {
   scopes: string[];
 }
 
+/**
+ * @swagger
+ * /api/auth/login:
+ *   post:
+ *     summary: Login with email and password
+ *     responses:
+ *       200:
+ *         success: true
+ *         message: string
+ *         token: string
+ */
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Response>,
@@ -65,7 +76,7 @@ export default async function handler(
       }
     });
 
-    payload.scopes = JSON.parse(roles.rows[0].scopes as string);
+    payload.scopes = roles.rows[0].scopes as unknown as string[];
 
     res.status(200).json({
       success: true,

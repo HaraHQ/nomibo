@@ -144,7 +144,11 @@ const LoginPage: FC = () => {
         <Form onSubmit={handleSubmit(onSubmit)}>
           <Input placeholder="Email" {...register("email")} />
           <Input placeholder="Password" type="password" {...register("password")} />
-          <SubmitButton type="submit">Login</SubmitButton>
+          {login.isPending ? (
+            <SubmitButton disabled>Logging in...</SubmitButton>
+          ) : (
+            <SubmitButton type="submit">Login</SubmitButton>
+          )}
         </Form>
       </Box>
     </Container>

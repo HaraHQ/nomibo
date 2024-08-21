@@ -42,13 +42,16 @@ export default async function handler(
 
     let extras = '';
     if (req.query.keyword) {
-      extras += ` AND name LIKE '%${req.query.keyword}%' OR email LIKE '%${req.query.keyword}%'`;
+      extras += ` AND title LIKE '%${req.query.keyword}%'`;
     }
     if (req.query.discount_type) {
       extras += ` AND discount_type = '${req.query.discount_type}'`;
     }
     if (req.query.features) {
-      extras += ` AND features LIKE '%${req.query.features}%'`;
+      const features = (req.query.features as string).split(',');
+      features.forEach((feature) => {
+        extras += ` AND features LIKE '%${feature}%'`;
+      });
     }
     if (req.query.status) {
       extras += ` AND status = '${req.query.status}'`;
